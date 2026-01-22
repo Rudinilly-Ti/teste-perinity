@@ -11,11 +11,11 @@ public class OrderItem {
     private final BigDecimal totalCost;
 
     public OrderItem (UUID id, UUID productId, Integer quantity, BigDecimal unityCost) {
-        if (quantity <= 0) {
+        if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero");
         }
 
-        if (unityCost.compareTo(BigDecimal.ZERO) <= 0) {
+        if (unityCost == null || unityCost.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Unity cost must be positive");
         }
 

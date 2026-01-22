@@ -7,23 +7,30 @@ public class Seller {
     private String name;
 
     public Seller(UUID id, String name) {
+        validateId(id);
+        validateName(name);
+
         this.id = id;
         this.name = name;
+    }
+
+    private void validateId(UUID id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Id cannot be null");
+        }
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
     }
 
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

@@ -20,7 +20,15 @@ public class Product {
     private final LocalDate registryDate;
 
     public Product(UUID id, String name, ProductType type, String productDetails, Dimension dimension, Double weight, BigDecimal buyPrice, BigDecimal sellPrice, LocalDate registryDate) {
-        validateInitialState(id, name, type, dimension, buyPrice, sellPrice, registryDate);
+        validateId(id);
+        validateName(name);
+        validateType(type);
+        validateProductDetails(productDetails);
+        validateDimension(dimension);
+        validateWeight(weight);
+        validateBuyPrice(buyPrice);
+        validateSellPrice(sellPrice);
+        validateRegistryDate(registryDate);
 
         this.id = id;
         this.name = name;
@@ -34,44 +42,37 @@ public class Product {
     }
 
     public void changeName(String name) {
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
+        validateName(name);
         this.name = name;
     }
 
-    public void changeType(ProductType newType) {
-        if (newType == null) {
-            throw new IllegalArgumentException("Type cannot be null");
-        }
-        this.type = newType;
+    public void changeType(ProductType type) {
+        validateType(type);
+        this.type = type;
     }
 
-    public void changeSellPrice(BigDecimal newPrice) {
-        validateSellPrice(newPrice);
-        this.sellPrice = newPrice;
+    public void changeSellPrice(BigDecimal price) {
+        validateSellPrice(price);
+        this.sellPrice = price;
     }
 
-    public void changeBuyPrice(BigDecimal newPrice) {
-        validateBuyPrice(newPrice);
-        this.buyPrice = newPrice;
+    public void changeBuyPrice(BigDecimal price) {
+        validateBuyPrice(price);
+        this.buyPrice = price;
     }
 
     public void updateDetails(String details) {
+        validateProductDetails(details);
         this.productDetails = details;
     }
 
     public void updateDimension(Dimension dimension) {
-        if (dimension == null) {
-            throw new IllegalArgumentException("Dimension must be valid");
-        }
+        validateDimension(dimension);
         this.dimension = dimension;
     }
 
     public void updateWeight(Double weight) {
-        if (weight != null && weight <= 0) {
-            throw new IllegalArgumentException("Weight must be positive");
-        }
+        validateWeight(weight);
         this.weight = weight;
     }
 
@@ -101,34 +102,40 @@ public class Product {
         }
     }
 
-    private void validateInitialState(
-            UUID id,
-            String name,
-            ProductType type,
-            Dimension dimension,
-            BigDecimal buyPrice,
-            BigDecimal sellPrice,
-            LocalDate registryDate
-    ) {
+    private void validateId(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }
+    }
 
+    private void validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name cannot be empty");
         }
+    }
 
+    private void validateType(ProductType type) {
         if (type == null) {
             throw new IllegalArgumentException("Type cannot be null");
         }
+    }
 
+    private void validateDimension(Dimension dimension) {
         if (dimension == null) {
             throw new IllegalArgumentException("Dimension must be valid");
         }
+    }
 
-        validateBuyPrice(buyPrice);
-        validateSellPrice(sellPrice);
-        validateRegistryDate(registryDate);
+    private void validateWeight(Double weight) {
+        if (weight == null || weight <= 0) {
+            throw new IllegalArgumentException("Weight must be positive");
+        }
+    }
+
+    private void validateProductDetails(String productDetails) {
+        if (productDetails == null || productDetails.isBlank()) {
+            throw new IllegalArgumentException("Product Details cannot be empty");
+        }
     }
 
     public UUID getId() {

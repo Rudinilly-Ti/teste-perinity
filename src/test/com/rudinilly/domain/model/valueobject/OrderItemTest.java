@@ -23,26 +23,36 @@ class OrderItemTest {
     }
 
     @Test
-    void shouldNotAllowZeroQuantity() {
+    void shouldNotAllowInvalidQuantity() {
         UUID id = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
         BigDecimal unityCost = new BigDecimal("10.50");
-        Integer quantity = 0;
 
         assertThrows(IllegalArgumentException.class, () ->
-                new OrderItem(id, productId, quantity, unityCost)
+                new OrderItem(id, productId, 0, unityCost)
+        );
+        assertThrows(IllegalArgumentException.class, () ->
+                new OrderItem(id, productId, -1, unityCost)
+        );
+        assertThrows(IllegalArgumentException.class, () ->
+                new OrderItem(id, productId, null, unityCost)
         );
     }
 
     @Test
-    void shouldNotAllowNegativeUnityCost() {
+    void shouldNotAllowInvalidUnityCost() {
         UUID id = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        BigDecimal unityCost = new BigDecimal("-1");
         Integer quantity = 2;
 
         assertThrows(IllegalArgumentException.class, () ->
-                new OrderItem(id, productId, quantity, unityCost)
+                new OrderItem(id, productId, quantity, new BigDecimal("-1"))
+        );
+        assertThrows(IllegalArgumentException.class, () ->
+                new OrderItem(id, productId, quantity, BigDecimal.ZERO)
+        );
+        assertThrows(IllegalArgumentException.class, () ->
+                new OrderItem(id, productId, quantity, null)
         );
     }
 }

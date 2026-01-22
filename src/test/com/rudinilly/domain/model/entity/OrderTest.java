@@ -12,10 +12,11 @@ class OrderTest {
     @Test
     void shouldAddAnItemToItemsList() {
         Order order = new Order();
+        UUID id = UUID.randomUUID();
 
         UUID productId = UUID.randomUUID();
 
-        order.addItem(productId, 2, BigDecimal.TEN);
+        order.addItem(id, productId, 2, BigDecimal.TEN);
 
         assertEquals(1, order.getItems().size());
     }
@@ -23,22 +24,22 @@ class OrderTest {
     @Test
     void shouldNotAddAnItemToItemsListDueToZeroQuantity() {
         Order order = new Order();
-
+        UUID id = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
 
         assertThrows(IllegalArgumentException.class, () ->
-            order.addItem(productId, 0, BigDecimal.TEN)
+            order.addItem(id, productId, 0, BigDecimal.TEN)
         );
     }
 
     @Test
     void shouldNotAddAnItemToItemsListDueToZeroUnityCost() {
         Order order = new Order();
-
+        UUID id = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
 
         assertThrows(IllegalArgumentException.class, () ->
-                order.addItem(productId, 2, BigDecimal.ZERO)
+                order.addItem(id, productId, 2, BigDecimal.ZERO)
         );
     }
 }
