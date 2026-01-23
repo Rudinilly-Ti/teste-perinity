@@ -1,6 +1,9 @@
 package com.rudinilly.domain.model.valueobject;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,42 +18,30 @@ class DimensionTest {
         assertEquals(3.5, dimension.depth());
     }
 
-    @Test
-    void shouldThrowExceptionWhenWidthIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(doubles = { 0.0, -1.0 })
+    void shouldThrowExceptionWhenWidthIsInvalid(Double value) {
         assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(0.0, 5.0, 3.0)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(-1.0, 5.0, 3.0)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(null, 5.0, 3.0)
+                new Dimension(value, 5.0, 3.0)
         );
     }
 
-    @Test
-    void shouldThrowExceptionWhenHeightIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(doubles = { 0.0, -1.0 })
+    void shouldThrowExceptionWhenHeightIsInvalid(Double value) {
         assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(4.0, 0.0, 3.0)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(5.0, null, 3.0)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(1.0, -5.0, 3.0)
+                new Dimension(4.0, value, 3.0)
         );
     }
 
-    @Test
-    void shouldThrowExceptionWhenDepthIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(doubles = { 0.0, -1.0 })
+    void shouldThrowExceptionWhenDepthIsInvalid(Double value) {
         assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(3.0, 5.0, 0.0)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(1.0, 5.0, -3.0)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                new Dimension(5.0, 3.0, null)
+                new Dimension(3.0, 5.0, value)
         );
     }
 }

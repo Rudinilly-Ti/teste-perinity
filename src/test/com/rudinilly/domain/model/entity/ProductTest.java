@@ -5,6 +5,9 @@ import com.rudinilly.domain.model.valueobject.Dimension;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -31,16 +34,30 @@ class ProductTest {
 
     @Test
     void shouldCreateProductWhenAllDataIsValid() {
-        Product product = createValidProduct();
+        UUID id = UUID.randomUUID();
+        String name = "Produto Teste";
+        ProductType type = ProductType.EXTERIOR_FINISH;
+        String details = "Detalhes do produto";
+        Dimension dimension = new Dimension(10.0, 20.0, 30.0);
+        Double weight =  2.5;
+        BigDecimal buyPrice = new BigDecimal("10.00");
+        BigDecimal sellPrice = new BigDecimal("20.00");
+        LocalDate registryDate = LocalDate.now();
+
+
+        Product product = new Product(
+            id, name, type, details, dimension, weight, buyPrice, sellPrice, registryDate
+        );
 
         assertNotNull(product);
-        assertEquals("Produto Teste", product.getName());
-        assertEquals(ProductType.EXTERIOR_FINISH, product.getType());
-        assertEquals("Detalhes do produto", product.getProductDetails());
-        assertEquals(new BigDecimal("10.00"), product.getBuyPrice());
-        assertEquals(new BigDecimal("20.00"), product.getSellPrice());
-        assertEquals(2.5, product.getWeight());
-        assertEquals(LocalDate.now(), product.getRegistryDate());
+        assertEquals(id, product.getId());
+        assertEquals(name, product.getName());
+        assertEquals(type, product.getType());
+        assertEquals(details, product.getProductDetails());
+        assertEquals(buyPrice, product.getBuyPrice());
+        assertEquals(sellPrice, product.getSellPrice());
+        assertEquals(weight, product.getWeight());
+        assertEquals(registryDate, product.getRegistryDate());
     }
 
     @Test
@@ -60,26 +77,14 @@ class ProductTest {
         });
     }
 
-    @Test
-    void shouldThrowExceptionWhenNameIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "")
+    void shouldThrowExceptionWhenNameIsInvalid(String name) {
         assertThrows(IllegalArgumentException.class, () -> {
             new Product(
                     UUID.randomUUID(),
-                    "",
-                    ProductType.SHOCK_ABSORBER,
-                    "Detalhes",
-                    new Dimension(1.0,1.0,1.0),
-                    1.0,
-                    new BigDecimal("10"),
-                    new BigDecimal("20"),
-                    LocalDate.now()
-            );
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Product(
-                    UUID.randomUUID(),
-                    null,
+                    name,
                     ProductType.SHOCK_ABSORBER,
                     "Detalhes",
                     new Dimension(1.0,1.0,1.0),
@@ -125,8 +130,11 @@ class ProductTest {
         });
     }
 
-    @Test
-    void shouldThrowExceptionWhenBuyPriceIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = { "0", "-1" })
+    void shouldThrowExceptionWhenBuyPriceIsInvalid(String value) {
+        BigDecimal buyPrice = value == null ? null : new BigDecimal(value);
         assertThrows(IllegalArgumentException.class, () -> {
             new Product(
                     UUID.randomUUID(),
@@ -135,41 +143,18 @@ class ProductTest {
                     "Detalhes",
                     new Dimension(1.0,1.0,1.0),
                     1.0,
-                    BigDecimal.ZERO,
-                    new BigDecimal("20"),
-                    LocalDate.now()
-            );
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Product(
-                    UUID.randomUUID(),
-                    "Produto",
-                    ProductType.EXTERIOR_FINISH,
-                    "Detalhes",
-                    new Dimension(1.0,1.0,1.0),
-                    1.0,
-                    new BigDecimal("-3"),
-                    new BigDecimal("20"),
-                    LocalDate.now()
-            );
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Product(
-                    UUID.randomUUID(),
-                    "Produto",
-                    ProductType.EXTERIOR_FINISH,
-                    "Detalhes",
-                    new Dimension(1.0,1.0,1.0),
-                    1.0,
-                    null,
+                    buyPrice,
                     new BigDecimal("20"),
                     LocalDate.now()
             );
         });
     }
 
-    @Test
-    void shouldThrowExceptionWhenSellPriceIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = { "0", "-1" })
+    void shouldThrowExceptionWhenSellPriceIsInvalid(String value) {
+        BigDecimal sellPrice = value == null ? null : new BigDecimal(value);
         assertThrows(IllegalArgumentException.class, () -> {
             new Product(
                     UUID.randomUUID(),
@@ -179,33 +164,7 @@ class ProductTest {
                     new Dimension(1.0,1.0,1.0),
                     1.0,
                     new BigDecimal("10"),
-                    new BigDecimal("-3"),
-                    LocalDate.now()
-            );
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Product(
-                    UUID.randomUUID(),
-                    "Produto",
-                    ProductType.EXTERIOR_FINISH,
-                    "Detalhes",
-                    new Dimension(1.0,1.0,1.0),
-                    1.0,
-                    new BigDecimal("10"),
-                    BigDecimal.ZERO,
-                    LocalDate.now()
-            );
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Product(
-                    UUID.randomUUID(),
-                    "Produto",
-                    ProductType.EXTERIOR_FINISH,
-                    "Detalhes",
-                    new Dimension(1.0,1.0,1.0),
-                    1.0,
-                    new BigDecimal("10"),
-                    null,
+                    sellPrice,
                     LocalDate.now()
             );
         });
@@ -245,24 +204,21 @@ class ProductTest {
     @Test
     void shouldChangeNameWhenIsValid() {
         defaultProduct.changeName("Troca Nome");
-
         assertEquals("Troca Nome", defaultProduct.getName());
     }
 
-    @Test
-    void shouldNotChangeNameWhenIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "" )
+    void shouldNotChangeNameWhenIsInvalid(String name) {
         assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.changeName("")
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.changeName(null)
+                defaultProduct.changeName(name)
         );
     }
 
     @Test
     void shouldChangeTypeWhenIsValid() {
         defaultProduct.changeType(ProductType.SHOCK_ABSORBER);
-
         assertEquals(ProductType.SHOCK_ABSORBER, defaultProduct.getType());
     }
 
@@ -279,16 +235,13 @@ class ProductTest {
         assertEquals(new BigDecimal("300"), defaultProduct.getSellPrice());
     }
 
-    @Test
-    void shouldNotChangeSellPriceWhenIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = { "0", "-1" })
+    void shouldNotChangeSellPriceWhenIsInvalid(String value) {
+        BigDecimal sellPrice = value == null ? null : new BigDecimal(value);
         assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.changeSellPrice(new BigDecimal("-3"))
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.changeSellPrice(BigDecimal.ZERO)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.changeSellPrice(null)
+                defaultProduct.changeSellPrice(sellPrice)
         );
     }
 
@@ -298,37 +251,33 @@ class ProductTest {
         assertEquals(new BigDecimal("300"), defaultProduct.getBuyPrice());
     }
 
-    @Test
-    void shouldNotChangeBuyPriceWhenIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = { "0", "-1" })
+    void shouldNotChangeBuyPriceWhenIsInvalid(String value) {
+        BigDecimal buyPrice = value == null ? null : new BigDecimal(value);
         assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.changeBuyPrice(new BigDecimal("-3"))
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.changeBuyPrice(BigDecimal.ZERO)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.changeBuyPrice(null)
+                defaultProduct.changeBuyPrice(buyPrice)
         );
     }
 
     @Test
-    void shouldUpdateDetailsWhenIsValid() {
+    void shouldChangeDetailsWhenIsValid() {
         defaultProduct.updateDetails("Engine");
         assertEquals("Engine", defaultProduct.getProductDetails());
     }
 
-    @Test
-    void shouldNotUpdateDetailsWhenIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "")
+    void shouldNotChangeDetailsWhenIsInvalid(String value) {
         assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.updateDetails("")
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.updateDetails(null)
+                defaultProduct.updateDetails(value)
         );
     }
 
     @Test
-    void shouldUpdateDimensionWhenIsValid() {
+    void shouldChangeDimensionWhenIsValid() {
         Dimension dimension = new Dimension(3.3, 4.5, 5.0);
         defaultProduct.updateDimension(dimension);
 
@@ -336,28 +285,24 @@ class ProductTest {
     }
 
     @Test
-    void shouldNotUpdateDimensionWhenIsInvalid() {
+    void shouldNotChangeDimensionWhenIsInvalid() {
         assertThrows(IllegalArgumentException.class, () ->
                 defaultProduct.updateDimension(null)
         );
     }
 
     @Test
-    void shouldUpdateWeightWhenIsValid() {
+    void shouldChangeWeightWhenIsValid() {
         defaultProduct.updateWeight(4.6);
         assertEquals(4.6, defaultProduct.getWeight());
     }
 
-    @Test
-    void shouldNotUpdateWeightWhenIsInvalid() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(doubles = { 0.0, -1.0 })
+    void shouldNotChangeWeightWhenIsInvalid(Double weight) {
         assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.updateWeight(-5.9)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.updateWeight(0.0)
-        );
-        assertThrows(IllegalArgumentException.class, () ->
-                defaultProduct.updateWeight(null)
+                defaultProduct.updateWeight(weight)
         );
     }
 }
