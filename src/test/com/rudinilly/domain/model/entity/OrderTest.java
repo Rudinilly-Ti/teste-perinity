@@ -2,8 +2,10 @@ package com.rudinilly.domain.model.entity;
 
 import com.rudinilly.domain.model.entity.Order;
 import com.rudinilly.domain.model.enums.PaymentMethod;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -16,153 +18,102 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class OrderTest {
 
-    Order defaultOrder = createValidOrder();
+    private Order defaultOrder;
+
+    @BeforeEach
+    void setup() {
+        defaultOrder = createValidOrder();
+    }
 
     private Order createValidOrder() {
-        UUID id = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
         UUID sellerId = UUID.randomUUID();
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
         String cardNumber = "4324 4324 5467 2341";
-        LocalDate orderDate = LocalDate.now();
 
         return new Order(
-            id,
             sellerId,
             clientId,
             paymentMethod,
             cardNumber,
-            BigDecimal.ZERO,
-            orderDate
+            BigDecimal.ZERO
         );
     }
 
     @Test
-    void shouldCreateAnOrder() {
-        UUID id = UUID.randomUUID();
+    void shouldCreateAnOrderWhenAllFieldsAreValid() {
         UUID sellerId = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
         String cardNumber = "4324 4324 5467 2341";
-        LocalDate orderDate = LocalDate.now();
 
         Order order = new Order(
-                id,
                 sellerId,
                 clientId,
                 paymentMethod,
                 cardNumber,
-                BigDecimal.ZERO,
-                orderDate
+                BigDecimal.ZERO
         );
 
         assertNotNull(order);
-        assertEquals(id, order.getId());
-        assertEquals(sellerId, order.getSellerId());
-        assertEquals(clientId, order.getClientId());
-        assertEquals(paymentMethod, order.getPaymentMethod());
-        assertEquals(cardNumber, order.getCardNumber());
-        assertEquals(BigDecimal.ZERO, order.getPaidValue());
-        assertEquals(orderDate, order.getOrderDate());
-
-    }
-
-    @Test
-    void shouldThrowExceptionWhenIdIsNull() {
-        UUID sellerId = UUID.randomUUID();
-        UUID clientId = UUID.randomUUID();
-        PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
-        String cardNumber = "4324 4324 5467 2341";
-        LocalDate orderDate = LocalDate.now();
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Order(null, sellerId, clientId, paymentMethod, cardNumber, BigDecimal.ZERO, orderDate);
-        });
     }
 
     @Test
     void shouldThrowExceptionWhenSellerIdIsNull() {
-        UUID id = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
         String cardNumber = "4324 4324 5467 2341";
-        LocalDate orderDate = LocalDate.now();
 
         assertThrows(IllegalArgumentException.class, () -> {
-            new Order(id, null, clientId, paymentMethod, cardNumber, BigDecimal.ZERO, orderDate);
+            new Order(null, clientId, paymentMethod, cardNumber, BigDecimal.ZERO);
         });
     }
     
     @Test
     void shouldThrowExceptionWhenClientIdIsNull() {
-        UUID id = UUID.randomUUID();
         UUID sellerId = UUID.randomUUID();
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
         String cardNumber = "4324 4324 5467 2341";
-        LocalDate orderDate = LocalDate.now();
 
         assertThrows(IllegalArgumentException.class, () -> {
-            new Order(id, sellerId, null, paymentMethod, cardNumber, BigDecimal.ZERO, orderDate);
+            new Order( sellerId, null, paymentMethod, cardNumber, BigDecimal.ZERO);
         });
     }
 
     @Test
     void shouldThrowExceptionWhenPaymentMethodIsNull() {
-        UUID id = UUID.randomUUID();
         UUID sellerId = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
         String cardNumber = "4324 4324 5467 2341";
-        LocalDate orderDate = LocalDate.now();
 
         assertThrows(IllegalArgumentException.class, () -> {
-            new Order(id, sellerId, clientId, null, cardNumber, BigDecimal.ZERO, orderDate);
+            new Order(sellerId, clientId, null, cardNumber, BigDecimal.ZERO);
         });
     }
 
     @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "")
+    @NullAndEmptySource
     void shouldThrowExceptionWhenPaymentMethodIsCreditCardAndCardNumberIsInvalid(String cardNumber) {
-        UUID id = UUID.randomUUID();
         UUID sellerId = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
         PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
-        LocalDate orderDate = LocalDate.now();
 
         assertThrows(IllegalArgumentException.class, () -> {
-            new Order(id, sellerId, clientId, paymentMethod, cardNumber, BigDecimal.ZERO, orderDate);
+            new Order(sellerId, clientId, paymentMethod, cardNumber, BigDecimal.ZERO);
         });
     }
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {"0", "-1"})
+    @ValueSource(strings = { "0", "-1" })
     void shouldThrowExceptionWhenPaymentMethodIsMoneyAndPaidValueIsInvalid(String value) {
         BigDecimal paidValue = value == null ? null : new BigDecimal(value);
-        UUID id = UUID.randomUUID();
         UUID sellerId = UUID.randomUUID();
         UUID clientId = UUID.randomUUID();
         PaymentMethod paymentMethod = PaymentMethod.MONEY;
-        LocalDate orderDate = LocalDate.now();
 
         assertThrows(IllegalArgumentException.class, () -> {
-            new Order(id, sellerId, clientId, paymentMethod, "", paidValue, orderDate);
-        });
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(ints = { 1, -1 })
-    void shouldThrowExceptionWhenOrderDateIsInvalid(Integer value) {
-        UUID id = UUID.randomUUID();
-        UUID sellerId = UUID.randomUUID();
-        UUID clientId = UUID.randomUUID();
-        PaymentMethod paymentMethod = PaymentMethod.CREDIT_CARD;
-        String cardNumber = "4324 4324 5467 2341";
-        LocalDate orderDate = value == null ? null : LocalDate.now().plusDays(value);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Order(id, sellerId, clientId, paymentMethod, cardNumber, BigDecimal.ZERO, orderDate);
+            new Order(sellerId, clientId, paymentMethod, "", paidValue);
         });
     }
 
@@ -170,9 +121,8 @@ class OrderTest {
     void shouldAddAnItemToItemsList() {
         UUID id = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        UUID orderId = UUID.randomUUID();
 
-        defaultOrder.addItem(id, productId, orderId, 2, BigDecimal.TEN);
+        defaultOrder.addItem(productId, 2, BigDecimal.TEN);
 
         assertEquals(1, defaultOrder.getItems().size());
     }
@@ -181,24 +131,22 @@ class OrderTest {
     @NullSource
     @ValueSource(ints = { 0, -1 })
     void shouldNotAddAnItemToItemsListDueToInvalidQuantity(Integer quantity) {
-        UUID id = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
 
         assertThrows(IllegalArgumentException.class, () ->
-            defaultOrder.addItem(id, defaultOrder.getId(), productId, quantity, BigDecimal.TEN)
+            defaultOrder.addItem(productId, quantity, BigDecimal.TEN)
         );
     }
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {"0", "-1"})
-    void shouldNotAddAnItemToItemsListDueToInvalidUnityCost(String value) {
-        UUID id = UUID.randomUUID();
+    @ValueSource(strings = { "0", "-1" })
+    void shouldNotAddAnItemToItemsListDueToInvalidUnitCost(String value) {
         UUID productId = UUID.randomUUID();
-        BigDecimal unityCost = value == null ? null : new BigDecimal(value);
+        BigDecimal unitCost = value == null ? null : new BigDecimal(value);
 
         assertThrows(IllegalArgumentException.class, () ->
-            defaultOrder.addItem(id, defaultOrder.getId(), productId, 2, unityCost)
+            defaultOrder.addItem(productId, 2, unitCost)
         );
     }
 }

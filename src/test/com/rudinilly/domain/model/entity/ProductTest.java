@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -20,21 +21,18 @@ class ProductTest {
 
     private Product createValidProduct() {
         return new Product(
-                UUID.randomUUID(),
                 "Produto Teste",
                 ProductType.EXTERIOR_FINISH,
                 "Detalhes do produto",
                 new Dimension(10.0, 20.0, 30.0),
                 2.5,
                 new BigDecimal("10.00"),
-                new BigDecimal("20.00"),
-                LocalDate.now()
+                new BigDecimal("20.00")
         );
     }
 
     @Test
     void shouldCreateProductWhenAllDataIsValid() {
-        UUID id = UUID.randomUUID();
         String name = "Produto Teste";
         ProductType type = ProductType.EXTERIOR_FINISH;
         String details = "Detalhes do produto";
@@ -42,56 +40,27 @@ class ProductTest {
         Double weight =  2.5;
         BigDecimal buyPrice = new BigDecimal("10.00");
         BigDecimal sellPrice = new BigDecimal("20.00");
-        LocalDate registryDate = LocalDate.now();
 
 
         Product product = new Product(
-            id, name, type, details, dimension, weight, buyPrice, sellPrice, registryDate
+            name, type, details, dimension, weight, buyPrice, sellPrice
         );
 
         assertNotNull(product);
-        assertEquals(id, product.getId());
-        assertEquals(name, product.getName());
-        assertEquals(type, product.getType());
-        assertEquals(details, product.getProductDetails());
-        assertEquals(buyPrice, product.getBuyPrice());
-        assertEquals(sellPrice, product.getSellPrice());
-        assertEquals(weight, product.getWeight());
-        assertEquals(registryDate, product.getRegistryDate());
-    }
-
-    @Test
-    void shouldThrowExceptionWhenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Product(
-                    null,
-                    "Produto",
-                    ProductType.INTERIOR_FINISH,
-                    "Detalhes",
-                    new Dimension(1.0,1.0,1.0),
-                    1.0,
-                    new BigDecimal("10"),
-                    new BigDecimal("20"),
-                    LocalDate.now()
-            );
-        });
     }
 
     @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "")
+    @NullAndEmptySource
     void shouldThrowExceptionWhenNameIsInvalid(String name) {
         assertThrows(IllegalArgumentException.class, () -> {
             new Product(
-                    UUID.randomUUID(),
                     name,
                     ProductType.SHOCK_ABSORBER,
                     "Detalhes",
                     new Dimension(1.0,1.0,1.0),
                     1.0,
                     new BigDecimal("10"),
-                    new BigDecimal("20"),
-                    LocalDate.now()
+                    new BigDecimal("20")
             );
         });
     }
@@ -100,15 +69,13 @@ class ProductTest {
     void shouldThrowExceptionWhenTypeIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Product(
-                    UUID.randomUUID(),
                     "Produto",
                     null,
                     "Detalhes",
                     new Dimension(1.0,1.0,1.0),
                     1.0,
                     new BigDecimal("10"),
-                    new BigDecimal("20"),
-                    LocalDate.now()
+                    new BigDecimal("20")
             );
         });
     }
@@ -117,15 +84,13 @@ class ProductTest {
     void shouldThrowExceptionWhenDimensionIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Product(
-                    UUID.randomUUID(),
                     "Produto",
                     ProductType.INTERIOR_FINISH,
                     "Detalhes",
                     null,
                     1.0,
                     new BigDecimal("10"),
-                    new BigDecimal("20"),
-                    LocalDate.now()
+                    new BigDecimal("20")
             );
         });
     }
@@ -137,15 +102,13 @@ class ProductTest {
         BigDecimal buyPrice = value == null ? null : new BigDecimal(value);
         assertThrows(IllegalArgumentException.class, () -> {
             new Product(
-                    UUID.randomUUID(),
                     "Produto",
                     ProductType.EXTERIOR_FINISH,
                     "Detalhes",
                     new Dimension(1.0,1.0,1.0),
                     1.0,
                     buyPrice,
-                    new BigDecimal("20"),
-                    LocalDate.now()
+                    new BigDecimal("20")
             );
         });
     }
@@ -157,46 +120,13 @@ class ProductTest {
         BigDecimal sellPrice = value == null ? null : new BigDecimal(value);
         assertThrows(IllegalArgumentException.class, () -> {
             new Product(
-                    UUID.randomUUID(),
                     "Produto",
                     ProductType.EXTERIOR_FINISH,
                     "Detalhes",
                     new Dimension(1.0,1.0,1.0),
                     1.0,
                     new BigDecimal("10"),
-                    sellPrice,
-                    LocalDate.now()
-            );
-        });
-    }
-
-    @Test
-    void shouldThrowExceptionWhenRegistryDateIsInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Product(
-                    UUID.randomUUID(),
-                    "Produto",
-                    ProductType.EXTERIOR_FINISH,
-                    "Detalhes",
-                    new Dimension(1.0,1.0,1.0),
-                    1.0,
-                    new BigDecimal("10"),
-                    new BigDecimal("20"),
-                    LocalDate.now().plusDays(1)
-            );
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Product(
-                    UUID.randomUUID(),
-                    "Produto",
-                    ProductType.EXTERIOR_FINISH,
-                    "Detalhes",
-                    new Dimension(1.0,1.0,1.0),
-                    1.0,
-                    new BigDecimal("10"),
-                    new BigDecimal("20"),
-                    LocalDate.now().minusDays(1)
+                    sellPrice
             );
         });
     }
@@ -208,8 +138,7 @@ class ProductTest {
     }
 
     @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "" )
+    @NullAndEmptySource
     void shouldNotChangeNameWhenIsInvalid(String name) {
         assertThrows(IllegalArgumentException.class, () ->
                 defaultProduct.changeName(name)
@@ -268,8 +197,7 @@ class ProductTest {
     }
 
     @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = "")
+    @NullAndEmptySource
     void shouldNotChangeDetailsWhenIsInvalid(String value) {
         assertThrows(IllegalArgumentException.class, () ->
                 defaultProduct.updateDetails(value)

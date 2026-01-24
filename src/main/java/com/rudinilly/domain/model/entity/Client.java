@@ -1,48 +1,47 @@
 package com.rudinilly.domain.model.entity;
 
 import com.rudinilly.domain.model.valueobject.Address;
+import com.rudinilly.domain.model.valueobject.CPF;
+import com.rudinilly.domain.model.valueobject.Email;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.UUID;
 
 public class Client {
     private UUID id;
     private String fullName;
     private String motherName;
-    private String email;
-    private String cpf;
+    private Email email;
+    private CPF cpf;
     private String rg;
     private String phone;
 
     private Address address;
 
     private LocalDate birthDate;
-    private LocalDate registryDate;
+    private LocalDate createdAt;
 
     public Client(
-            UUID id,
             String fullName,
             String motherName,
-            String email,
-            String cpf,
+            Email email,
+            CPF cpf,
             String rg,
             String phone,
             Address address,
-            LocalDate birthDate,
-            LocalDate registryDate
+            LocalDate birthDate
     ) {
-        validateId(id);
         validateFullName(fullName);
-        validadeMotherName(motherName);
+        validateMotherName(motherName);
         validateEmail(email);
         validateCPF(cpf);
         validateRG(rg);
         validatePhone(phone);
         validateAddress(address);
         validateBirthDate(birthDate);
-        validateRegistryDate(registryDate);
 
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.fullName = fullName;
         this.motherName = motherName;
         this.email = email;
@@ -51,28 +50,64 @@ public class Client {
         this.phone = phone;
         this.address = address;
         this.birthDate = birthDate;
-        this.registryDate = registryDate;
+        this.createdAt = LocalDate.now();
     }
 
-    private void validateId(UUID id) {}
+    private void validateFullName(String fullName) {
+        if (fullName == null || fullName.isBlank()) {
+            throw new IllegalArgumentException("Full Name cannot be empty");
+        }
+    }
 
-    private void validateFullName(String fullName) {}
+    private void validateMotherName(String motherName) {
+        if (motherName == null || motherName.isBlank()) {
+            throw new IllegalArgumentException("Mother Name cannot be empty");
+        }
+    }
 
-    private void validadeMotherName(String motherName) {}
+    private void validateEmail(Email email) {
+        if (email == null) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+    }
 
-    private void validateEmail(String email) {}
+    private void validateCPF(CPF cpf) {
+        if (cpf == null) {
+            throw new IllegalArgumentException("CPF cannot be empty");
+        }
+    }
 
-    private void validateCPF(String cpf) {}
+    private void validateRG(String rg) {
+        if (rg == null || rg.isBlank()) {
+            throw new IllegalArgumentException("RG cannot be empty");
+        }
+    }
 
-    private void validateRG(String rg) {}
+    private void validatePhone(String phone) {
+        if (phone == null || phone.isBlank()) {
+            throw new IllegalArgumentException("Phone cannot be empty");
+        }
+    }
 
-    private void validatePhone(String phone) {}
+    private void validateAddress(Address address) {
+        if (address == null) {
+            throw new IllegalArgumentException("Address cannot be null");
+        }
+    }
 
-    private void validateAddress(Address address) {}
+    private void validateBirthDate(LocalDate birthDate) {
+        if (birthDate == null) {
+            throw new IllegalArgumentException("Birth date cannot be null");
+        }
 
-    private void validateBirthDate(LocalDate birthDate) {}
+        if (birthDate.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Birth date cannot be a future date");
+        }
 
-    private void validateRegistryDate(LocalDate registryDate) {}
+        if (Period.between(birthDate, LocalDate.now()).getYears() < 18) {
+            throw new IllegalArgumentException("User must be at least 18 years old");
+        }
+    }
 
     public UUID getId() {
         return id;
@@ -86,11 +121,11 @@ public class Client {
         return motherName;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public String getCpf() {
+    public CPF getCpf() {
         return cpf;
     }
 
@@ -110,7 +145,7 @@ public class Client {
         return birthDate;
     }
 
-    public LocalDate getRegistryDate() {
-        return registryDate;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 }

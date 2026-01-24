@@ -20,26 +20,24 @@ public class Order {
     private BigDecimal totalOrder = BigDecimal.ZERO;
     private List<OrderItem> items = new ArrayList<>();
 
-    public Order(UUID id, UUID sellerId, UUID clientId, PaymentMethod paymentMethod, String cardNumber, BigDecimal paidValue, LocalDate orderDate) {
-        validateId(id);
+    public Order(UUID sellerId, UUID clientId, PaymentMethod paymentMethod, String cardNumber, BigDecimal paidValue) {
         validateSellerId(sellerId);
         validateClientId(clientId);
         validatePaymentMethod(paymentMethod);
         validateCardNumber(cardNumber, paymentMethod);
         validatePaidValue(paidValue, paymentMethod);
-        validateOrderDate(orderDate);
        
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.sellerId = sellerId;
         this.clientId = clientId;
         this.paymentMethod = paymentMethod;
         this.cardNumber = cardNumber;
         this.paidValue = paidValue;
-        this.orderDate = orderDate;
+        this.orderDate = LocalDate.now();
     }
 
-    public void addItem(UUID id, UUID orderId, UUID productId, Integer quantity, BigDecimal unityCost) {
-        OrderItem item = new OrderItem(id, productId, orderId, quantity, unityCost);
+    public void addItem(UUID productId, Integer quantity, BigDecimal unitCost) {
+        OrderItem item = new OrderItem(productId, this.id, quantity, unitCost);
         items.add(item);
         calculateTotalOrder();
     }
@@ -52,12 +50,6 @@ public class Order {
         this.totalOrder = items.stream()
                 .map(OrderItem::getTotalCost)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    private void validateId(UUID id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
     }
 
     private void validateSellerId(UUID sellerId) {
@@ -89,20 +81,6 @@ public class Order {
         if (paymentMethod == PaymentMethod.MONEY &&
                 (paidValue == null || paidValue.compareTo(BigDecimal.ZERO) <= 0)) {
             throw new IllegalArgumentException("Paid Value must be positive");
-        }
-    }
-
-    private void validateOrderDate(LocalDate orderDate) {
-        if(orderDate == null) {
-            throw new IllegalArgumentException("Order date cannot be null");
-        }
-
-        if (orderDate.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Order date cannot be in the future");
-        }
-
-        if (orderDate.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Order date cannot be in the past");
         }
     }
 

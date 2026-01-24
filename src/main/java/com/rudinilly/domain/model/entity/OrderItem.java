@@ -8,28 +8,21 @@ public class OrderItem {
     private final UUID productId;
     private final UUID orderId;
     private final Integer quantity;
-    private final BigDecimal unityCost;
+    private final BigDecimal unitCost;
     private final BigDecimal totalCost;
 
-    public OrderItem (UUID id, UUID productId, UUID orderId, Integer quantity, BigDecimal unityCost) {
-        validateId(id);
+    public OrderItem (UUID productId, UUID orderId, Integer quantity, BigDecimal unitCost) {
         validateProductId(productId);
         validateOrderId(orderId);
         validateQuantity(quantity);
-        validateUnityCost(unityCost);
+        validateUnitCost(unitCost);
 
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.productId = productId;
         this.orderId = orderId;
         this.quantity = quantity;
-        this.unityCost = unityCost;
-        this.totalCost = unityCost.multiply(new BigDecimal(quantity));
-    }
-
-    private void validateId(UUID id) {
-        if(id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
+        this.unitCost = unitCost;
+        this.totalCost = unitCost.multiply(BigDecimal.valueOf(quantity));
     }
 
     private void validateProductId(UUID productId) {
@@ -50,7 +43,7 @@ public class OrderItem {
         }
     }
 
-    private void validateUnityCost(BigDecimal unityCost) {
+    private void validateUnitCost(BigDecimal unityCost) {
         if (unityCost == null || unityCost.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Unity cost must be positive");
         }
@@ -73,7 +66,7 @@ public class OrderItem {
     }
 
     public BigDecimal getUnityCost() {
-        return unityCost;
+        return unitCost;
     }
 
     public BigDecimal getTotalCost() {

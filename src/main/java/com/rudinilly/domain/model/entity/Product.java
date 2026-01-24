@@ -5,7 +5,6 @@ import com.rudinilly.domain.model.enums.ProductType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Objects;
 import java.util.UUID;
 
 public class Product {
@@ -17,10 +16,9 @@ public class Product {
     private Double weight;
     private BigDecimal buyPrice;
     private BigDecimal sellPrice;
-    private final LocalDate registryDate;
+    private final LocalDate createdAt;
 
-    public Product(UUID id, String name, ProductType type, String productDetails, Dimension dimension, Double weight, BigDecimal buyPrice, BigDecimal sellPrice, LocalDate registryDate) {
-        validateId(id);
+    public Product(String name, ProductType type, String productDetails, Dimension dimension, Double weight, BigDecimal buyPrice, BigDecimal sellPrice) {
         validateName(name);
         validateType(type);
         validateProductDetails(productDetails);
@@ -28,9 +26,8 @@ public class Product {
         validateWeight(weight);
         validateBuyPrice(buyPrice);
         validateSellPrice(sellPrice);
-        validateRegistryDate(registryDate);
 
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.name = name;
         this.type = type;
         this.productDetails = productDetails;
@@ -38,7 +35,7 @@ public class Product {
         this.weight = weight;
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
-        this.registryDate = registryDate;
+        this.createdAt = LocalDate.now();
     }
 
     public void changeName(String name) {
@@ -85,26 +82,6 @@ public class Product {
     private void validateSellPrice(BigDecimal sellPrice) {
         if (sellPrice == null || sellPrice.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Sell price must be positive");
-        }
-    }
-
-    private void validateRegistryDate(LocalDate date) {
-        if(date == null) {
-            throw new IllegalArgumentException("Registry date cannot be null");
-        }
-
-        if (date.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Registry date cannot be in the future");
-        }
-
-        if (date.isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("Registry date cannot be in the past");
-        }
-    }
-
-    private void validateId(UUID id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
         }
     }
 
@@ -170,7 +147,7 @@ public class Product {
         return sellPrice;
     }
 
-    public LocalDate getRegistryDate() {
-        return registryDate;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 }

@@ -6,18 +6,11 @@ public class Seller {
     private UUID id;
     private String name;
 
-    public Seller(UUID id, String name) {
-        validateId(id);
+    public Seller(String name) {
         validateName(name);
 
-        this.id = id;
+        this.id = UUID.randomUUID();
         this.name = name;
-    }
-
-    private void validateId(UUID id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
-        }
     }
 
     private void validateName(String name) {

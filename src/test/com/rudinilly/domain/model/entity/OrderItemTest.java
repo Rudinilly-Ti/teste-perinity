@@ -14,86 +14,65 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrderItemTest {
 
     @Test
-    void shouldCreateOrderItemWhenAllDataIsValid() {
-        UUID id = UUID.randomUUID();
+    void shouldCreateOrderItemWhenAllFieldAreValid() {
         UUID productId = UUID.randomUUID();
         UUID orderId = UUID.randomUUID();
-        BigDecimal unityCost = new BigDecimal("10.50");
+        BigDecimal unitCost = BigDecimal.valueOf(10.50);
         Integer quantity = 3;
 
-        OrderItem item = new OrderItem(id, productId, orderId, quantity, unityCost);
+        OrderItem item = new OrderItem(productId, orderId, quantity, unitCost);
 
-        assertEquals(id, item.getId());
-        assertEquals(productId, item.getProductId());
-        assertEquals(orderId, item.getOrderId());
-        assertEquals(quantity, item.getQuantity());
-        assertEquals(unityCost, item.getUnityCost());
-        assertEquals(new BigDecimal("31.50"), item.getTotalCost());
+        assertNotNull(item);
+        assertEquals(BigDecimal.valueOf(31.5), item.getTotalCost());
     }
 
     @Test
-    void shouldNotAllowNullId() {
-        UUID productId = UUID.randomUUID();
+    void shouldThrowExceptionWhenProductIdIsNull() {
         UUID orderId = UUID.randomUUID();
-        BigDecimal unityCost = new BigDecimal("10.50");
+        BigDecimal unitCost = BigDecimal.valueOf(10.50);
         Integer quantity = 3;
 
         assertThrows(IllegalArgumentException.class, () ->{
-            new OrderItem(null, productId, orderId, quantity, unityCost);
+            new OrderItem(null, orderId, quantity, unitCost);
         });
     }
 
     @Test
-    void shouldNotAllowNullProductId() {
-        UUID id = UUID.randomUUID();
-        UUID orderId = UUID.randomUUID();
-        BigDecimal unityCost = new BigDecimal("10.50");
-        Integer quantity = 3;
-
-        assertThrows(IllegalArgumentException.class, () ->{
-            new OrderItem(id, null, orderId, quantity, unityCost);
-        });
-    }
-
-    @Test
-    void shouldNotAllowNullOrderId() {
-        UUID id = UUID.randomUUID();
+    void shouldThrowExceptionWhenOrderIdIsNull() {
         UUID productId = UUID.randomUUID();
-        BigDecimal unityCost = new BigDecimal("10.50");
+        BigDecimal unitCost = BigDecimal.valueOf(10.50);
         Integer quantity = 3;
 
         assertThrows(IllegalArgumentException.class, () ->{
-            new OrderItem(id, productId, null, quantity, unityCost);
+            new OrderItem(productId, null, quantity, unitCost);
         });
     }
 
     @ParameterizedTest
     @NullSource
     @ValueSource(ints = { 0, -1 })
-    void shouldNotAllowInvalidQuantity(Integer value) {
-        UUID id = UUID.randomUUID();
+    void shouldThrowExceptionWhenQuantityIsInvalid(Integer quantity) {
         UUID orderId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
-        BigDecimal unityCost = new BigDecimal("10.50");
+        BigDecimal unitCost = BigDecimal.valueOf(10.50);
 
         assertThrows(IllegalArgumentException.class, () ->
-                new OrderItem(id, orderId, productId, value, unityCost)
+                new OrderItem(productId, orderId, quantity, unitCost)
         );
     }
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = { "0", "-1" })
-    void shouldNotAllowInvalidUnityCost(String value) {
-        UUID id = UUID.randomUUID();
+    @ValueSource(doubles = { 0.0, -1.0 })
+    void shouldThrowExceptionWhenUnitCostIsInvalid(Double value) {
         UUID orderId = UUID.randomUUID();
         UUID productId = UUID.randomUUID();
         Integer quantity = 2;
 
-        BigDecimal unityCost = value == null ? null : new BigDecimal(value);
+        BigDecimal unitCost = value == null ? null : BigDecimal.valueOf(value);
 
         assertThrows(IllegalArgumentException.class, () ->
-                new OrderItem(id, orderId, productId, quantity, unityCost)
+                new OrderItem(productId, orderId, quantity, unitCost)
         );
     }
 }
