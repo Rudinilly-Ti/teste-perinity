@@ -148,4 +148,13 @@ public class Client {
     public LocalDate getCreatedAt() {
         return createdAt;
     }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
 }

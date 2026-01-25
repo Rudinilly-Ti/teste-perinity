@@ -27,4 +27,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and Push with Maven
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          MONGO_DB: ${{ secrets.MONGO_DB }}
         run: ./mvnw clean package -Dquarkus.container-image.push=true

@@ -16,7 +16,7 @@ public class Order {
     private PaymentMethod paymentMethod;
     private String cardNumber;
     private BigDecimal paidValue;
-    private LocalDate orderDate;
+    private LocalDate createdAt;
     private BigDecimal totalOrder = BigDecimal.ZERO;
     private List<OrderItem> items = new ArrayList<>();
 
@@ -33,7 +33,7 @@ public class Order {
         this.paymentMethod = paymentMethod;
         this.cardNumber = cardNumber;
         this.paidValue = paidValue;
-        this.orderDate = LocalDate.now();
+        this.createdAt = LocalDate.now();
     }
 
     public void addItem(UUID productId, Integer quantity, BigDecimal unitCost) {
@@ -84,6 +84,18 @@ public class Order {
         }
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setTotalOrder (BigDecimal totalOrder) {
+        this.totalOrder = totalOrder;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -108,8 +120,8 @@ public class Order {
         return paidValue;
     }
 
-    public LocalDate getOrderDate() {
-        return orderDate;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
     public BigDecimal getTotalOrder() {

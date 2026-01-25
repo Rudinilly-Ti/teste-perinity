@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class OrderItem {
-    private final UUID id;
+    private UUID id;
     private final UUID productId;
     private final UUID orderId;
     private final Integer quantity;
@@ -47,6 +47,10 @@ public class OrderItem {
         if (unityCost == null || unityCost.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Unity cost must be positive");
         }
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public UUID getId() {
